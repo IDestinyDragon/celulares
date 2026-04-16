@@ -1,0 +1,16 @@
+[
+    {
+        "email": "admin@techstore.com",
+        "pass": "admin123",
+        "rol": "admin",
+        "carrito": [],
+        "pedidos": []
+    },
+    {
+        "email": "cliente@correo.com",
+        "pass": "123456",
+        "rol": "cliente",
+        "carrito": [],
+        "pedidos": []
+    }
+]

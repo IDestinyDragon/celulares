@@ -1,0 +1,23 @@
+name: Respaldo de Base de Datos JSON
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configurar identidad del Bot
+        run: |
+          git config --global user.name "Auto-Backup Bot"
+          git config --global user.email "backup-bot@example.com"
+
+      - name: Guardar cambios en el JSON
+        run: |
+          git add usuarios.json # Aquí le decimos que vigile tu archivo de datos
+          git commit -m "Respaldo automático de datos: $(date)" || echo "Sin cambios"
+          git push

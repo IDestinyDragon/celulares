@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Pedidos - TechStore</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1><a href="index.html" style="color: white; text-decoration: none;">TechStore</a></h1>
+            <div class="carrito-icono-contenedor">
+                <a href="carrito.html">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="contador-carrito">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="contenedor">
+        <h2>Historial de Pedidos</h2>
+        <div id="historial-pedidos">
+            </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Lógica específica para renderizar pedidos
+        function cargarHistorial() {
+            const historialContenedor = document.getElementById('historial-pedidos');
+            const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioActivo'));
+
+            if (!usuarioLogueado) {
+                historialContenedor.innerHTML = "<p>Debes iniciar sesión para ver tus pedidos.</p>";
+                return;
+            }
+
+            const pedidos = usuarioLogueado.pedidos || [];
+
+            if (pedidos.length === 0) {
+                historialContenedor.innerHTML = "<p>Aún no has realizado ninguna compra.</p>";
+                return;
+            }
+
+            let html = "";
+            pedidos.forEach((pedido, index) => {
+                html += `
+                <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 8px;">
+                    <p><strong>Pedido #${index + 1}</strong> - Fecha: ${pedido.fecha}</p>
+                    <ul>
+                        ${pedido.items.map(i => `<li>${i.nombre} (x${i.cantidad})</li>`).join('')}
+                    </ul>
+                    <p><strong>Total:</strong> ${formatoMoneda(pedido.total)}</p>
+                </div>`;
+            });
+            historialContenedor.innerHTML = html;
+        }
+        cargarHistorial();
+    </script>
+</body>
+</html>

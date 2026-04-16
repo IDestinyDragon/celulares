@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soporte - TechStore</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .faq-item { border-bottom: 1px solid #eee; padding: 10px 0; }
+        .faq-pregunta { cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; }
+        .faq-respuesta { display: none; padding: 10px 0; color: #555; }
+        .faq-item.active .faq-respuesta { display: block; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1><a href="index.html" style="color: white; text-decoration: none;">TechStore</a></h1>
+        </div>
+    </header>
+
+    <main class="contenedor">
+        <h2>Centro de Soporte</h2>
+
+        <section>
+            <h3>Preguntas Frecuentes</h3>
+            <div class="faq-item">
+                <div class="faq-pregunta" onclick="this.parentElement.classList.toggle('active')">
+                    ¿Cuál es el tiempo de entrega? <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-respuesta">El tiempo estimado es de 3 a 5 días hábiles a nivel nacional.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-pregunta" onclick="this.parentElement.classList.toggle('active')">
+                    ¿Los equipos tienen garantía? <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-respuesta">Todos nuestros celulares cuentan con 1 año de garantía por defectos de fábrica.</div>
+            </div>
+        </section>
+
+        <section style="margin-top: 30px;">
+            <h3>Contacto</h3>
+            <p><i class="fas fa-envelope"></i> soporte@techstore.com</p>
+            <p><i class="fas fa-phone"></i> +57 300 123 4567</p>
+        </section>
+
+        <section style="margin-top: 30px;">
+            <h3>Nuestras Políticas</h3>
+            <p>Consulta nuestros términos de devolución y tratamiento de datos personales en el documento PDF adjunto en tu factura.</p>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
