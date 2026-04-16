@@ -15,42 +15,48 @@
 </head>
 <body>
     <header>
-        <div class="header-container">
+        <div class="header-container" style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
             <h1><a href="index.html" style="color: white; text-decoration: none;">TechStore</a></h1>
+            <nav style="display: flex; align-items: center; gap: 20px;">
+                <button id="btn-idioma" onclick="cambiarIdioma()" style="background: #3498db; border: none; color: white; cursor: pointer; padding: 5px 12px; border-radius: 5px; font-weight: bold;">EN</button>
+                <a href="pedidos.html" id="txt-pedidos" style="color: white; text-decoration: none;">Mis Pedidos</a>
+                <a href="soporte.html" id="txt-soporte" style="color: white; text-decoration: none;">Soporte</a>
+            </nav>
         </div>
     </header>
 
     <main class="contenedor">
-        <h2>Centro de Soporte</h2>
+        <h2 id="soporteTitulo">Centro de Soporte</h2>
 
         <section>
-            <h3>Preguntas Frecuentes</h3>
+            <h3 id="faqTitulo">Preguntas Frecuentes</h3>
             <div class="faq-item">
-                <div class="faq-pregunta" onclick="this.parentElement.classList.toggle('active')">
+                <div class="faq-pregunta" id="faq1" onclick="this.parentElement.classList.toggle('active')">
                     ¿Cuál es el tiempo de entrega? <i class="fas fa-chevron-down"></i>
                 </div>
-                <div class="faq-respuesta">El tiempo estimado es de 3 a 5 días hábiles a nivel nacional.</div>
+                <div class="faq-respuesta" id="res1">El tiempo estimado es de 3 a 5 días hábiles a nivel nacional.</div>
             </div>
             <div class="faq-item">
-                <div class="faq-pregunta" onclick="this.parentElement.classList.toggle('active')">
+                <div class="faq-pregunta" id="faq2" onclick="this.parentElement.classList.toggle('active')">
                     ¿Los equipos tienen garantía? <i class="fas fa-chevron-down"></i>
                 </div>
-                <div class="faq-respuesta">Todos nuestros celulares cuentan con 1 año de garantía por defectos de fábrica.</div>
+                <div class="faq-respuesta" id="res2">Todos nuestros celulares cuentan con 1 año de garantía por defectos de fábrica.</div>
             </div>
         </section>
 
         <section style="margin-top: 30px;">
-            <h3>Contacto</h3>
+            <h3 id="contactoTitulo">Contacto</h3>
             <p><i class="fas fa-envelope"></i> soporte@techstore.com</p>
             <p><i class="fas fa-phone"></i> +57 300 123 4567</p>
         </section>
 
         <section style="margin-top: 30px;">
-            <h3>Nuestras Políticas</h3>
-            <p>Consulta nuestros términos de devolución y tratamiento de datos personales en el documento PDF adjunto en tu factura.</p>
+            <h3 id="politicasTitulo">Nuestras Políticas</h3>
+            <p id="politicasTexto">Consulta nuestros términos de devolución y tratamiento de datos personales en el documento PDF adjunto en tu factura.</p>
         </section>
     </main>
 
     <script src="script.js"></script>
 </body>
 </html>
+

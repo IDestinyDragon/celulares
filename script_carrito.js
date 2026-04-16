@@ -1,61 +1,49 @@
-// --- Elementos del DOM ---
-// Estos elementos deben existir en el HTML correspondiente.
-const contenidoCarritoDiv = document.getElementById('contenido-carrito'); // En carrito.html
-const totalCarritoP = document.getElementById('total-carrito');       // En carrito.html
-const contadorCarritoSpan = document.getElementById('contador-carrito'); // En header (común)
+const contenidoCarritoDiv = document.getElementById('contenido-carrito');
+const totalCarritoP = document.getElementById('total-carrito');
+const contadorCarritoSpan = document.getElementById('contador-carrito');
 
-// --- Variables globales para el carrito ---
-let carrito = [];
-let total = 0;
+let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+let usuarioActivo = JSON.parse(localStorage.getItem('usuarioActivo')) || null;
+let carrito = usuarioActivo ? (usuarioActivo.carrito || []) : [];
+let idiomaActual = localStorage.getItem('idioma') || 'es';
 
-// --- Funciones de utilidad ---
+const formatoMoneda = (valor) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(valor);
 
-// Función para actualizar el contador del carrito en la cabecera
 function actualizarContadorCarrito() {
     if (contadorCarritoSpan) {
-        contadorCarritoSpan.textContent = carrito.length;
+        const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+        contadorCarritoSpan.textContent = totalItems;
     }
 }
 
-// Función para cargar carrito y total desde localStorage
-function cargarCarritoDesdeLocalStorage() {
-    if (localStorage.getItem('carrito')) {
-        carrito = JSON.parse(localStorage.getItem('carrito'));
-        // Asegurarse de que total sea un número y tenga 2 decimales
-        total = parseFloat(localStorage.getItem('total')) || 0;
-    } else {
-        // Si no hay nada en localStorage, inicializar carrito y total
-        carrito = [];
-        total = 0;
+function guardarEstado() {
+    if (usuarioActivo) {
+        const index = usuarios.findIndex(u => u.email === usuarioActivo.email);
+        if (index !== -1) {
+            usuarios[index].carrito = carrito;
+            usuarios[index].pedidos = usuarioActivo.pedidos || [];
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+            localStorage.setItem('usuarioActivo', JSON.stringify(usuarioActivo));
+        }
     }
     actualizarContadorCarrito();
 }
 
-// --- Funciones para la página del carrito (carrito.html) ---
-
-// Función para renderizar los elementos del carrito en la página del carrito
 function renderizarCarrito() {
     const contenedor = document.getElementById('contenido-carrito');
     const totalContenedor = document.getElementById('total-carrito-contenedor');
+    const t = traducciones[idiomaActual];
 
-    // Validación de seguridad para que no de error en otras páginas
     if (!contenedor) return;
 
     if (carrito.length === 0) {
-        contenedor.innerHTML = "<p>Carrito vacío</p>";
+        contenedor.innerHTML = `<p>${t.carritoVacio}</p>`;
         if(totalContenedor) totalContenedor.innerHTML = "";
         return;
     }
 
-    let html = `<table>
-        <tr>
-            <th>Producto</th>
-            <th>Cant.</th>
-            <th>Subtotal</th>
-            <th>Acción</th>
-        </tr>`;
-
     let totalGlobal = 0;
+    let html = `<table><tr><th>${t.tablaProducto || 'Producto'}</th><th>${t.tablaCant || 'Cant.'}</th><th>${t.tablaSubtotal || 'Subtotal'}</th><th>${t.tablaAccion || 'Acción'}</th></tr>`;
 
     carrito.forEach((item, index) => {
         const subtotal = item.precio * item.cantidad;
@@ -64,53 +52,65 @@ function renderizarCarrito() {
             <td>${item.nombre}</td>
             <td>${item.cantidad}</td>
             <td>${formatoMoneda(subtotal)}</td>
-            <td><button class="btn-eliminar" onclick="eliminar(${index})">Eliminar</button></td>
+            <td><button class="btn-eliminar" onclick="eliminar(${index})">${t.btnEliminar || 'Eliminar'}</button></td>
         </tr>`;
     });
 
     contenedor.innerHTML = html + `</table>`;
 
     if(totalContenedor) {
-        // LÓGICA DE ADMIN: Solo el primer usuario registrado ve el log
-        const esAdmin = usuarios.length > 0 && usuarioActivo && usuarios[0].email === usuarioActivo.email;
-
+        const esAdmin = usuarioActivo && usuarioActivo.rol === "admin";
         totalContenedor.innerHTML = `
-            <p style="font-size:1.5rem; font-weight:bold;">Total: ${formatoMoneda(totalGlobal)}</p>
+            <p style="font-size:1.5rem; font-weight:bold;">${t.total}: ${formatoMoneda(totalGlobal)}</p>
             <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-                ${esAdmin ? `<button onclick="generarBackupLog()" class="btn-agregar" style="background: #3498db; width:auto; padding:10px 20px;">Descargar Log del Día</button>` : ''}
-                <button onclick="finalizarCompra()" class="btn-agregar" style="background: #27ae60; width:auto; padding:10px 20px;">Finalizar Compra</button>
-            </div>
-        `;
+                ${esAdmin ? `<button onclick="generarBackupLog()" class="btn-agregar" style="background: #3498db; width:auto; padding:10px 20px;">${t.btnLog || 'JSON Log'}</button>` : ''}
+                <button onclick="finalizarCompra()" class="btn-agregar" style="background: #27ae60; width:auto; padding:10px 20px;">${t.finalizar}</button>
+            </div>`;
     }
 }
 
-// Manejador para el clic en el botón de eliminar
-function handleEliminarClick(event) {
-    if (event.target.classList.contains('btn-eliminar')) {
-        const indexAEliminar = parseInt(event.target.dataset.index);
-
-        if (indexAEliminar >= 0 && indexAEliminar < carrito.length) {
-            const itemEliminado = carrito[indexAEliminar];
-            total -= itemEliminado.precio; // Restar el precio del total
-            carrito.splice(indexAEliminar, 1); // Eliminar el elemento del array
-
-            // Actualizar localStorage
-            localStorage.setItem('carrito', JSON.stringify(carrito));
-            localStorage.setItem('total', total.toFixed(2));
-
-            actualizarContadorCarrito(); // Actualizar el contador global
-            renderizarCarrito(); // Volver a renderizar la tabla del carrito
-        }
+function eliminar(index) {
+    if (carrito[index].cantidad > 1) {
+        carrito[index].cantidad--;
+    } else {
+        carrito.splice(index, 1);
     }
+    guardarEstado();
+    renderizarCarrito();
 }
 
-// --- Inicialización al cargar la página ---
+function finalizarCompra() {
+    if (carrito.length === 0) return;
+
+    const registroPedido = {
+        idCompra: "REG-" + Date.now(),
+        fecha: new Date().toLocaleString(),
+        correo: usuarioActivo.email,
+        productos: [...carrito],
+        total: carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0)
+    };
+
+    if (!usuarioActivo.pedidos) usuarioActivo.pedidos = [];
+    usuarioActivo.pedidos.push(registroPedido);
+
+    carrito = [];
+    usuarioActivo.carrito = [];
+
+    guardarEstado();
+    alert(traducciones[idiomaActual].confirmarCompra);
+    window.location.href = 'pedidos.html';
+}
+
+function generarBackupLog() {
+    const todosLosPedidos = usuarios.flatMap(u => u.pedidos || []);
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(todosLosPedidos, null, 2));
+    const dl = document.createElement('a');
+    dl.setAttribute("href", dataStr);
+    dl.setAttribute("download", "registro_ventas.json");
+    dl.click();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    cargarCarritoDesdeLocalStorage(); // Cargar carrito y total
-
-    // Determinar qué página se está cargando y ejecutar la función correspondiente
-    if (contenidoCarritoDiv) {
-        // Estamos en la página del carrito (carrito.html)
-        renderizarCarrito();
-    }
+    actualizarContadorCarrito();
+    if (contenidoCarritoDiv) renderizarCarrito();
 });

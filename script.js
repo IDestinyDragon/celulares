@@ -1,4 +1,3 @@
-
 const celularesData = [
     { id: 1, nombre: "Samsung Galaxy S25 Ultra", precio: 29000.00, img: "imagenes/Samsung Galaxy S25 Ultra.jpg", cpu: "Snapdragon 8 Gen 3", ram: "12GB", bat: "5000mAh" },
     { id: 2, nombre: "iPhone 17 de 256 GB", precio: 18000.00, img: "imagenes/iPhone 17 de 256 GB.jpg", cpu: "Apple A18", ram: "8GB", bat: "4422mAh" },
@@ -114,13 +113,134 @@ function agregarAlCarrito(id) {
     guardarTodo();
     alert(`${producto.nombre} añadido.`);
 }
+const traducciones = {
+    es: {
+        pedidos: "Mis Pedidos",
+        soporte: "Soporte",
+        salir: "Salir",
+        titulo: "Nuestros Celulares",
+        btnDetalles: "Ver Detalles",
+        btnAgregar: "Agregar al Carrito",
+        procesador: "Procesador",
+        ram: "Memoria RAM",
+        bateria: "Batería",
+        cerrar: "Cerrar",
+        carritoVacio: "Carrito vacío",
+        confirmarCompra: "¡Compra realizada con éxito!",
+        soporteTitulo: "Centro de Soporte",
+        faqTitulo: "Preguntas Frecuentes",
+        faq1: "¿Cuál es el tiempo de entrega?",
+        res1: "El tiempo estimado es de 3 a 5 días hábiles a nivel nacional.",
+        faq2: "¿Los equipos tienen garantía?",
+        res2: "Todos nuestros celulares cuentan con 1 año de garantía por defectos de fábrica.",
+        contactoTitulo: "Contacto",
+        politicasTitulo: "Nuestras Políticas",
+        politicasTexto: "Consulta nuestros términos de devolución y tratamiento de datos personales en el documento PDF adjunto en tu factura.",
+        historialTitulo: "Historial de Pedidos",
+        carritoTitulo: "Tu Carrito",
+        loginTitulo: "Iniciar Sesión",
+        registroTitulo: "Crear Cuenta",
+        emailLabel: "Correo Electrónico",
+        passLabel: "Contraseña",
+        btnEntrar: "Entrar",
+        linkRegistro: "¿No tienes cuenta? Regístrate aquí",
+        linkTengoCuenta: "Ya tengo cuenta"
+    },
+    en: {
+        pedidos: "My Orders",
+        soporte: "Support",
+        salir: "Logout",
+        titulo: "Our Phones",
+        btnDetalles: "View Details",
+        btnAgregar: "Add to Cart",
+        procesador: "Processor",
+        ram: "RAM Memory",
+        bateria: "Battery",
+        cerrar: "Close",
+        carritoVacio: "Empty Cart",
+        confirmarCompra: "Purchase successful!",
+        soporteTitulo: "Support Center",
+        faqTitulo: "Frequently Asked Questions",
+        faq1: "What is the delivery time?",
+        res1: "The estimated time is 3 to 5 business days nationwide.",
+        faq2: "Do the devices have a warranty?",
+        res2: "All our phones have a 1-year warranty for factory defects.",
+        contactoTitulo: "Contact",
+        politicasTitulo: "Our Policies",
+        politicasTexto: "Check our return terms and personal data processing in the PDF document attached to your invoice.",
+        historialTitulo: "Order History",
+        carritoTitulo: "Your Cart",
+        loginTitulo: "Login",
+        registroTitulo: "Create Account",
+        emailLabel: "Email Address",
+        passLabel: "Password",
+        btnEntrar: "Sign In",
+        linkRegistro: "Don't have an account? Register here",
+        linkTengoCuenta: "Already have an account"
+    }
+};
 
-// 6. RENDERIZADO
+// 1. SOLUCIÓN IDIOMA: Se recupera de localStorage para persistencia entre páginas
+let idiomaActual = localStorage.getItem('idioma') || 'es';
+
+function cambiarIdioma() {
+    idiomaActual = (idiomaActual === 'es') ? 'en' : 'es';
+    localStorage.setItem('idioma', idiomaActual);
+    aplicarTraducciones();
+}
+
+function aplicarTraducciones() {
+    const t = traducciones[idiomaActual];
+
+    const btnI = document.getElementById('btn-idioma');
+    if (btnI) btnI.textContent = idiomaActual === 'es' ? 'EN' : 'ES';
+
+    const mapaTextos = {
+        'txt-pedidos': t.pedidos,
+        'txt-soporte': t.soporte,
+        'txt-salir': t.salir,
+        'main-titulo': t.titulo,
+        'soporteTitulo': t.soporteTitulo,
+        'faqTitulo': t.faqTitulo,
+        'faq1': t.faq1,
+        'res1': t.res1,
+        'faq2': t.faq2,
+        'res2': t.res2,
+        'contactoTitulo': t.contactoTitulo,
+        'politicasTitulo': t.politicasTitulo,
+        'politicasTexto': t.politicasTexto
+    };
+
+    for (const id in mapaTextos) {
+        const elemento = document.getElementById(id);
+        if (elemento) {
+            const icono = elemento.querySelector('i');
+            if (icono) {
+                elemento.innerHTML = mapaTextos[id] + " " + icono.outerHTML;
+            } else {
+                elemento.textContent = mapaTextos[id];
+            }
+        }
+    }
+
+    if (document.getElementById('lista-celulares')) dibujarProductos();
+    if (document.getElementById('contenido-carrito')) renderizarCarrito();
+}
+
+async function iniciarApp() {
+    await cargarDatos();
+    dibujarProductos();
+    actualizarContador();
+    aplicarTraducciones();
+}
+
 function dibujarProductos() {
     const contenedor = document.getElementById('lista-celulares');
     if (!contenedor) return;
 
-    contenedor.innerHTML = ""; // Limpiamos antes de dibujar
+    const t = traducciones[idiomaActual];
+
+    contenedor.innerHTML = "";
     celularesData.forEach(prod => {
         const div = document.createElement('div');
         div.className = 'celular-item';
@@ -129,23 +249,23 @@ function dibujarProductos() {
             <h3>${prod.nombre}</h3>
             <p>${formatoMoneda(prod.precio)}</p>
             <div style="display:flex; flex-direction:column; gap:5px;">
-                <button class="btn-detalle" onclick="verDetalles(${prod.id})">Ver detalles</button>
-                <button class="btn-agregar" onclick="agregarAlCarrito(${prod.id})">Agregar al Carrito</button>
+                <button class="btn-detalle" onclick="verDetalles(${prod.id})">${t.btnDetalles}</button>
+                <button class="btn-agregar" onclick="agregarAlCarrito(${prod.id})">${t.btnAgregar}</button>
             </div>`;
         contenedor.appendChild(div);
     });
 }
-
 function verDetalles(id) {
     const p = celularesData.find(x => x.id === id);
+    const t = traducciones[idiomaActual];
     const modal = `
         <div id="modal-overlay" onclick="this.remove()" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;justify-content:center;align-items:center;z-index:1000;">
             <div class="modal-content" onclick="event.stopPropagation()" style="background:white;padding:25px;border-radius:12px;max-width:400px;width:90%;">
                 <h2 style="margin-top:0;">${p.nombre}</h2>
-                <p><strong>Procesador:</strong> ${p.cpu}</p>
-                <p><strong>Memoria RAM:</strong> ${p.ram}</p>
-                <p><strong>Batería:</strong> ${p.bat}</p>
-                <button onclick="document.getElementById('modal-overlay').remove()" style="width:100%;padding:10px;margin-top:10px;cursor:pointer;">Cerrar</button>
+                <p><strong>${t.procesador}:</strong> ${p.cpu}</p>
+                <p><strong>${t.ram}:</strong> ${p.ram}</p>
+                <p><strong>${t.bateria}:</strong> ${p.bat}</p>
+                <button onclick="document.getElementById('modal-overlay').remove()" style="width:100%;padding:10px;margin-top:10px;cursor:pointer;">${t.cerrar}</button>
             </div>
         </div>`;
     document.body.insertAdjacentHTML('beforeend', modal);
@@ -189,9 +309,28 @@ function eliminar(index) {
     renderizarCarrito();
 }
 
+
 function finalizarCompra() {
     if (carrito.length === 0) return;
-    alert("¡Gracias por tu compra!");
+
+    const t = traducciones[idiomaActual];
+
+
+    const ticketCompra = {
+        fecha: new Date().toLocaleString(),
+        cliente: usuarioActivo.email,
+        productos: carrito,
+        total: carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0)
+    };
+
+
+    const blob = new Blob([JSON.stringify(ticketCompra, null, 2)], { type: "application/json" });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `Compra_${usuarioActivo.email}_${Date.now()}.json`;
+    a.click();
+
+    alert(t.confirmarCompra);
     carrito = [];
     guardarTodo();
     location.reload();
@@ -214,10 +353,11 @@ function generarBackupLog() {
 
 
 async function iniciarApp() {
-    await cargarDatos();    // Espera el JSON
-    dibujarProductos();     // Dibuja en index.html
-    actualizarContador();   // Actualiza icono
-    if (document.getElementById('contenido-carrito')) renderizarCarrito(); // Dibuja en carrito.html
+    await cargarDatos();
+    dibujarProductos();
+    actualizarContador();
+    aplicarTraducciones();
+    if (document.getElementById('contenido-carrito')) renderizarCarrito();
 }
 
 iniciarApp();

@@ -8,27 +8,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <header>
-        <div class="header-container" style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
-            <h1><a href="index.html" style="color: white; text-decoration: none;">TechStore</a></h1>
+   <header>
+    <div class="header-container" style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
+        <h1><a href="index.html" style="color: white; text-decoration: none;">TechStore</a></h1>
 
-            <nav style="display: flex; align-items: center; gap: 20px;">
-                <a href="pedidos.html" style="color: white; text-decoration: none;">Mis Pedidos</a>
-                <a href="soporte.html" style="color: white; text-decoration: none;">Soporte</a>
+        <nav style="display: flex; align-items: center; gap: 20px;">
+            <button id="btn-idioma" onclick="cambiarIdioma()" style="background: #3498db; border: none; color: white; cursor: pointer; padding: 5px 12px; border-radius: 5px; font-weight: bold;">
+                EN
+            </button>
 
-                <div class="carrito-icono-contenedor">
-                    <a href="carrito.html" style="color: white; text-decoration: none;">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span id="contador-carrito">0</span>
-                    </a>
-                </div>
+            <a href="pedidos.html" id="txt-pedidos" style="color: white; text-decoration: none;">Mis Pedidos</a>
+            <a href="soporte.html" id="txt-soporte" style="color: white; text-decoration: none;">Soporte</a>
 
-                <button onclick="cerrarSesion()" style="background: none; border: 1px solid white; color: white; cursor: pointer; padding: 5px 10px; border-radius: 5px;">
-                    Salir
-                </button>
-            </nav>
-        </div>
-    </header>
+            <div class="carrito-icono-contenedor">
+                <a href="carrito.html" style="color: white; text-decoration: none;">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="contador-carrito">0</span>
+                </a>
+            </div>
+
+            <button id="txt-salir" onclick="cerrarSesion()" style="background: none; border: 1px solid white; color: white; cursor: pointer; padding: 5px 10px; border-radius: 5px;">
+                Salir
+            </button>
+        </nav>
+    </div>
+</header>
 
     <main class="contenedor">
         <h2>Nuestros Celulares</h2>
